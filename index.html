@@ -1,67 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <!-- css boostrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <!-- AOS Animation -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link rel="shortcut icon" href="assets/img/idn (1).png" type="image/x-icon">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>E-Report Fasilitas Sekolah</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <!-- nav -->
-     <nav class="navbar navbar-expand-lg bg-primary-subtle py-4">
-        <div class="container">
-            <!-- logo -->
-            <a href="index.html" class="navbar-brand d-flex align-items-center gap-2">
-            <img src="assets/img/idn (1).png" alt="logo" width="40" class="d-inline-block align-text-top rounded">
-            <span class="fw-bold text-danger"> E-Report - IDN </span>
-            </a>
-
-            <!-- button toggler -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbar-Nav" aria-expanded="false" aria-label="Toggle-navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarNav" >
-                <ul class="navbar-nav ms-auto gap-4 pt-4 pt-lg-0">
-                    <li class="nav-item">
-                        <a href="index.html" class="nav-link text-primary">Home</a>
-
-                    </li>
-                    
-                </ul>
-            </div>
+<body class="bg-light">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="index.html">E-Report Sekolah</a>
+      <div>
+        <a href="reports.html" class="btn btn-light btn-sm">Lihat Laporan</a>
+      </div>
+    </div>
+  </nav>
+  <main class="container py-5">
+  <h1 class="mb-4 fw-bold text-center">Dashboard E-Report</h1>
+  <div class="row text-center" id="dashboard-stats">
+    <div class="col-md-3 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h3 id="totalReports">0</h3>
+          <p>Total Laporan</p>
         </div>
-     </nav>
-     <!-- hero section -->
-      <section id="hero" class="py-5">
-        <div class="container">
-            <div class="col text-center text-md-start" data-aos="fade-right"data-aos-duration="1000">
-                <h1 class="fw-bold">
-                    selamat datang <br>
-                    di <span class="text-danger">Applikasi IDN - Report</span><br>
-                    forum pengaduan online
-                </h1>
-                <p>
-                    APlikasi ini memudahkan siswa,guru,maupun orang tua untuk melaporkan keluhan terkait akademik maupun non akademik maupun secara cepat dan praktis
-                </p>
-            </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h3 id="newReports">0</h3>
+          <p>Status: Baru</p>
         </div>
-      </section>
-    <!-- about-us -->
-    <!-- services -->
-     <!-- recent-report -->
-
-
-
-
-
-    <!-- boosstraps -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-    <!-- aos animation -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h3 id="processReports">0</h3>
+          <p>Status: Diproses</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h3 id="doneReports">0</h3>
+          <p>Status: Selesai</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="text-center mt-4">
+    <a href="add-report.html" class="btn btn-primary">+ Tambah Laporan Baru</a>
+    <a href="reports.html" class="btn btn-outline-secondary">Lihat Semua Laporan</a>
+  </div>
+</main>
+<script >
+       function updateDashboard() {
+    const reports = JSON.parse(localStorage.getItem('reports')) || [];
+    const total = reports.length;
+    const baru = reports.filter(r => r.status === "Baru").length;
+    const proses = reports.filter(r => r.status === "Diproses").length;
+    const selesai = reports.filter(r => r.status === "Selesai").length;
+    document.getElementById('totalReports').innerText = total;
+    document.getElementById('newReports').innerText = baru;
+    document.getElementById('processReports').innerText = proses;
+    document.getElementById('doneReports').innerText = selesai;
+  }
+  updateDashboard();
+</script>
 </body>
 </html>
