@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -16,23 +13,32 @@
     </div>
   </nav>
 
-
   <main class="container py-4">
     <h2 class="mb-4">Edit Laporan</h2>
 
-
     <form id="edit-form">
+      <!-- 🧑 Nama Pelapor -->
+      <div class="mb-3">
+        <label class="form-label">Nama Pelapor (Opsional)</label>
+        <input type="text" class="form-control" id="reporterName">
+      </div>
+
       <div class="mb-3">
         <label class="form-label">Nama Fasilitas</label>
         <input type="text" class="form-control" id="facilityName" required>
       </div>
 
-
       <div class="mb-3">
         <label class="form-label">Deskripsi Masalah</label>
-        <textarea class="form-control" id="description" rows="3" required></textarea>
+        <textarea class="form-control" id="description" rows="3" minlength="10" required></textarea>
+        <div class="form-text text-danger" id="descWarning" style="display:none;">Deskripsi minimal 10 karakter.</div>
       </div>
 
+      <!-- 📅 Tanggal Kejadian -->
+      <div class="mb-3">
+        <label class="form-label">Tanggal Kejadian</label>
+        <input type="date" class="form-control" id="incidentDate" required>
+      </div>
 
       <div class="mb-3">
         <label class="form-label">Status</label>
@@ -43,54 +49,110 @@
         </select>
       </div>
 
+      <!-- 📸 Ganti Gambar -->
+      <div class="mb-3">
+        <label class="form-label">Foto Fasilitas (Opsional)</label>
+        <input type="file" class="form-control" id="imageInput" accept="image/*">
+      </div>
+
+      <!-- Preview Gambar -->
+      <div class="mb-3" id="previewContainer" style="display:none;">
+        <label class="form-label">Preview Gambar:</label><br>
+        <img id="imagePreview" class="img-fluid rounded shadow-sm" style="max-height: 200px;">
+      </div>
 
       <button type="submit" class="btn btn-success">Simpan Perubahan</button>
       <a href="reports.html" class="btn btn-secondary">Batal</a>
     </form>
   </main>
 
-  <script >    
+  <script>
     const params = new URLSearchParams(window.location.search);
     const id = parseInt(params.get('id'));
-
-
     const reports = JSON.parse(localStorage.getItem('reports')) || [];
     const report = reports.find(r => r.id === id);
 
+    const descField = document.getElementById('description');
+    const descWarning = document.getElementById('descWarning');
+    const imageInput = document.getElementById('imageInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewContainer = document.getElementById('previewContainer');
 
     if (!report) {
       alert('Laporan tidak ditemukan!');
       window.location.href = 'reports.html';
     }
 
-
-    // Tampilkan data lama ke form
+    // Isi data lama ke form
+    document.getElementById('reporterName').value = report.reporter || '';
     document.getElementById('facilityName').value = report.name;
     document.getElementById('description').value = report.description;
     document.getElementById('status').value = report.status;
+    document.getElementById('incidentDate').value = report.incidentDate || '';
 
+    if (report.image) {
+      imagePreview.src = report.image;
+      previewContainer.style.display = 'block';
+    }
 
-    document.getElementById('edit-form').addEventListener('submit', function(e) {
+    // Preview gambar baru jika dipilih
+    imageInput.addEventListener('change', () => {
+      const file = imageInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          imagePreview.src = e.target.result;
+          previewContainer.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Validasi deskripsi
+    descField.addEventListener('input', () => {
+      if (descField.value.length < 10) {
+        descWarning.style.display = 'block';
+      } else {
+        descWarning.style.display = 'none';
+      }
+    });
+
+    // Simpan perubahan
+    document.getElementById('edit-form').addEventListener('submit', async function(e) {
       e.preventDefault();
 
+      if (descField.value.length < 10) {
+        alert('Deskripsi minimal 10 karakter!');
+        return;
+      }
 
+      let base64Image = report.image;
+      if (imageInput.files.length > 0) {
+        const file = imageInput.files[0];
+        base64Image = await toBase64(file);
+      }
+
+      // Update data laporan
+      report.reporter = document.getElementById('reporterName').value || "Tidak disebutkan";
       report.name = document.getElementById('facilityName').value;
-      report.description = document.getElementById('description').value;
+      report.description = descField.value;
+      report.incidentDate = document.getElementById('incidentDate').value;
       report.status = document.getElementById('status').value;
-
+      report.image = base64Image;
 
       localStorage.setItem('reports', JSON.stringify(reports));
       alert('Perubahan berhasil disimpan!');
       window.location.href = 'report-detail.html?id=' + report.id;
     });
-    </script>
+
+    function toBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+      });
+    }
+  </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
